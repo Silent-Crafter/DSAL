@@ -8,7 +8,8 @@ private:
 
 public:
     Graph() {};
-    Graph(const vector<string>& cities) {
+    Graph(vector<string>& cities) {
+        std::sort(cities.begin(), cities.end());
         // Initialize everything to 0
         for (const string& cityA : cities) {
             for (const string& cityB : cities) {
