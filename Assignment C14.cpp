@@ -27,9 +27,9 @@ public:
         (*pair).first = weight;
 
         // same for city B
-        auto cityBRow = adjMatrix[ca];
-        pair = std::find_if(cityBRow.begin(), cityBRow.end(), [cb](const std::pair<int, string>& element) {
-            return (element.first == 0) && (element.second == cb);
+        auto& cityBRow = adjMatrix[cb];
+        pair = std::find_if(cityBRow.begin(), cityBRow.end(), [ca](const std::pair<int, string>& element) {
+            return (element.first == 0) && (element.second == ca);
         });
         (*pair).first = weight;
     }
