@@ -116,10 +116,17 @@ public:
             temp = level.front();
             level.pop();
 
+            if (!temp) {
+                representation.emplace_back("NULL");
+                representation.emplace_back("NULL");
+                continue;
+            }
+
             if (temp->left) {
                 representation.emplace_back(1, temp->left->op);
                 level.push(temp->left);
             } else {
+                level.push(nullptr);
                 representation.emplace_back("NULL");
             }
 
@@ -127,6 +134,7 @@ public:
                 representation.emplace_back(1, temp->right->op);
                 level.push(temp->right);
             } else {
+                level.push(nullptr);
                 representation.emplace_back("NULL");
             }
         }
