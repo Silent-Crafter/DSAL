@@ -6,7 +6,7 @@ private:
     unordered_map<string, vector<string>> adjList;
 
 public:
-    Graph() = default;
+    Graph() {};
 
     void DFS(const string& start, vector<string>& order) {
         stack<string> s;
