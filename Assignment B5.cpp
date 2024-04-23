@@ -35,8 +35,8 @@ public:
         root = new Node(std::move(d));
     }
 
-    Node* addChild(string d) {
-        return root->addChild(std::move(d));
+    Node* addChild(const string& d) {
+        return root->addChild(d);
     }
 
     void display() {
