@@ -8,6 +8,7 @@ private:
 
 public:
     Graph() {};
+
     Graph(vector<string>& cities) {
         std::sort(cities.begin(), cities.end());
         // Initialize everything to 0
@@ -20,19 +21,12 @@ public:
 
     void addEdge(const string& ca, const string& cb, int weight) {
         auto& cityARow = adjMatrix[ca];
-        // lambda function to find the pair
-        // https://www.programiz.com/cpp-programming/lambda-expression
-        auto pair = std::find_if(cityARow.begin(), cityARow.end(), [cb](const std::pair<int, string>& element) {
-            return (element.first == 0) && (element.second == cb);
-        });
-        (*pair).first = weight;
+        auto pair = std::find(cityARow.begin(), cityARow.end(), make_pair(0, cb));
+        pair->first = weight;
 
-        // same for city B
         auto& cityBRow = adjMatrix[cb];
-        pair = std::find_if(cityBRow.begin(), cityBRow.end(), [ca](const std::pair<int, string>& element) {
-            return (element.first == 0) && (element.second == ca);
-        });
-        (*pair).first = weight;
+        pair = std::find(cityBRow.begin(), cityBRow.end(), make_pair(0, ca));
+        pair->first = weight;
     }
 
     void displayMatrix() {
