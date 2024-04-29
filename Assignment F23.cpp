@@ -53,6 +53,7 @@ int main() {
     db.addRecord(15, "Nikhil", 'S', "Nashik");
     db.addRecord(24, "Gunjan", 'S', "Sambhaji Nagar");
     db.addRecord(54, "Yash", 'S', "Jalgaon");
+    db.addRecord(50, "Saksham", 'S', "Delhi");
 
     db.readFromFile();
     db.display();
