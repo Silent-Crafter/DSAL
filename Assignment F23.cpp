@@ -12,7 +12,6 @@ class StudentDB {
 private:
     vector<Student> data;
     string filename;
-    fstream* db;
 
 public:
     StudentDB(const string& filename): filename(filename) {}
