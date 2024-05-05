@@ -98,62 +98,14 @@ public:
         delete this->root;
         this->root = nullptr;
     }
-
-    void display() {
-        if (!root) {
-            cout << "[]" << endl;
-            return;
-        }
-        cout << "ARRAY REPRESENTATION: [ " << flush;
-
-        queue<Node*> level;
-        vector<string> representation;
-        level.push(root);
-        representation.emplace_back(1, root->op);
-
-        Node* temp;
-        while(!level.empty()) {
-            temp = level.front();
-            level.pop();
-
-            if (!temp) {
-                representation.emplace_back("NULL");
-                representation.emplace_back("NULL");
-                continue;
-            }
-
-            if (temp->left) {
-                representation.emplace_back(1, temp->left->op);
-                level.push(temp->left);
-            } else {
-                level.push(nullptr);
-                representation.emplace_back("NULL");
-            }
-
-            if (temp->right) {
-                representation.emplace_back(1, temp->right->op);
-                level.push(temp->right);
-            } else {
-                level.push(nullptr);
-                representation.emplace_back("NULL");
-            }
-        }
-
-        for (auto& item : representation) {
-            cout << item << ", ";
-        }
-        cout << "]" << endl;
-    }
 };
 
 
 int main() {
     AbstractSyntaxTree ast;
     ast.fromPrefixNotation("+--a*bc/def");
-    ast.display();
+    cout << "POST ORDER: ";
     ast.postOrder();
     ast.clear();
-    cout << "After delete operation: ";
-    ast.display();
     return 0;
 }

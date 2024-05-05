@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include <string>
 using namespace std;
 
 class BSTNode {
@@ -121,10 +120,6 @@ public:
         BSTNode* temp;
         level.push(this->root);
 
-        /*
-         * Adds child nodes to current level
-         * Repeat the procedure for each item in the level
-         */
         while(!level.empty()) {
             height++;
             nodes = level.size();
@@ -143,6 +138,7 @@ public:
         return height;
     }
 
+    // OPTIONAL FUNCTION
     void display() {
         if (!root) {
             cout << "[]" << endl;
@@ -218,9 +214,9 @@ int main() {
         cout << "17 is not present in the binary tree" << endl;
     }
 
-    bst.display();
+    bst.display();          // OPTIONAL
     bst.swapLeftRight();
-    bst.display();
+    bst.display();          // OPTIONAL
 
     return 0;
 }

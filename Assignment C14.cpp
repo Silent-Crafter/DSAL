@@ -4,29 +4,23 @@ using namespace std;
 
 class Graph {
 private:
-    map<string, vector<pair<int, string>>> adjMatrix;
+    map<string, map<string, int>> adjMatrix;
 
 public:
     Graph() {};
 
     Graph(vector<string>& cities) {
-        std::sort(cities.begin(), cities.end());
         // Initialize everything to 0
-        for (const string& cityA : cities) {
-            for (const string& cityB : cities) {
-                adjMatrix[cityA].emplace_back(0, cityB);
+        for (string cityA : cities) {
+            for (string cityB : cities) {
+                adjMatrix[cityA][cityB] = 0;
             }
         }
     }
 
-    void addEdge(const string& ca, const string& cb, int weight) {
-        auto& cityARow = adjMatrix[ca];
-        auto pair = std::find(cityARow.begin(), cityARow.end(), make_pair(0, cb));
-        pair->first = weight;
-
-        auto& cityBRow = adjMatrix[cb];
-        pair = std::find(cityBRow.begin(), cityBRow.end(), make_pair(0, ca));
-        pair->first = weight;
+    void addEdge(string ca, string cb, int weight) {
+        adjMatrix[ca][cb] = weight;
+        adjMatrix[cb][ca] = weight;
     }
 
     void displayMatrix() {
@@ -34,16 +28,16 @@ public:
 
         // Display Column Labels
         cout << "   ";
-        for (const auto& element : adjMatrix) {
+        for (auto element : adjMatrix) {
             cout << " " << element.first;
         }
         cout << endl;
 
         // Display Rows
-        for (const auto& element : adjMatrix) {
-            cout << element.first << " [";
-            for (auto weights : element.second) {
-                cout << " " << weights.first;
+        for (auto key : adjMatrix) {
+            cout << key.first << " [";
+            for (auto element : key.second) {
+                cout << " " << element.second;
             }
             cout << " ]" << endl;
         }

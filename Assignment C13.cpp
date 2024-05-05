@@ -8,7 +8,7 @@ private:
 public:
     Graph() {};
 
-    void DFS(const string& start, vector<string>& order) {
+    void DFS(string start, vector<string>& order) {
         stack<string> s;
         unordered_map<string, bool> visited = {};
 
@@ -31,7 +31,7 @@ public:
         }
     }
 
-    void BFS(const string& start, vector<string>& order) {
+    void BFS(string start, vector<string>& order) {
         queue<string> q;
         unordered_map<string, bool> visited = {};
         string curr;
@@ -47,14 +47,14 @@ public:
                 order.push_back(curr);
             }
 
-            for (const auto& neighbour : adjList[curr]) {
+            for (auto neighbour : adjList[curr]) {
                 if (!visited[neighbour])
                     q.push(neighbour);
             }
         }
     }
 
-    void addEdge(const string& parent, const string& child) {
+    void addEdge(string parent, string child) {
         adjList[parent].push_back(child);
         adjList[child].push_back(parent);
     }
@@ -78,12 +78,12 @@ int main() {
     g.BFS(start, bfs_order);
 
     cout << "DFS: " << flush;
-    for (const auto& it : dfs_order)
+    for (auto it : dfs_order)
         cout << it << " " << flush;
     cout << endl;
 
     cout << "BFS: " << flush;
-    for (const auto& it : bfs_order)
+    for (auto it : bfs_order)
         cout << it << " " << flush;
     cout << endl;
 
