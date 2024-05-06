@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef struct _Student {
+typedef struct Student {
     int rollno;
     char name[16];
     char div;
@@ -10,11 +10,11 @@ typedef struct _Student {
 
 class StudentDB {
 private:
-    vector<Student> data;
     string filename;
 
 public:
-    StudentDB(const string& filename): filename(filename) {}
+    StudentDB(): filename("student.dat") {}
+    ~StudentDB() { remove("student.dat"); }
 
     void addRecord(int r, const char* n, char d, const char* a) {
         fstream db(filename, ios::app | ios::binary);
@@ -28,34 +28,68 @@ public:
         db.close();
     }
 
-    void readFromFile() {
-        fstream db(filename, ios::in | ios::binary);
+    void deleteRecord(int rollNo) {
+        fstream infile(filename, ios::in | ios::binary);
         Student temp;
-        while (db.read((char*)&temp, sizeof(Student))) {
-            db.peek();
+        vector<Student> data;
+
+        while(infile.read((char*)&temp, sizeof(Student))) {
+            if (temp.rollno == rollNo) {
+                continue;
+            }
+
             data.push_back(temp);
         }
-        db.close();
+        infile.close();
+
+        fstream outfile(filename, ios::trunc | ios::out | ios::binary);
+        for (auto student : data) {
+            outfile.write((char*)&student, sizeof(Student));
+        }
+        outfile.close();
     }
 
     void display() {
-        cout << "ROLLNO\t\tNAME\t\tDIV\t\tADDRESS" << endl;
-        for (const auto& elem : data) {
-            cout << elem.rollno << "\t\t\t" << elem.name << "\t\t" << elem.div << "\t\t" << elem.address << endl;
+        fstream infile(filename, ios::in | ios::binary);
+        Student temp;
+
+        while (infile.read((char*)&temp, sizeof(Student)))
+            cout << temp.rollno << "\t\t\t" << temp.name << "\t\t" << temp.div << "\t\t" << temp.address << endl;
+
+        infile.close();
+    }
+
+    void search(int rollNo) {
+        Student temp;
+        fstream infile(filename, ios::in | ios::binary);
+        while (infile.read((char*)&temp, sizeof(Student))) {
+            if (temp.rollno == rollNo) {
+                cout << "\nStudent Record for roll no. " << rollNo << ":" << endl;
+                cout << temp.rollno << "\t\t\t" << temp.name << "\t\t" << temp.div << "\t\t" << temp.address << endl;
+                infile.close();
+                return;
+            }
         }
+
+        cout << "\nStudent record for roll no. " << rollNo << " not found." << endl;
     }
 };
 
 int main() {
-    StudentDB db("temp.dat");
+    StudentDB db;
 
     db.addRecord(15, "Nikhil", 'S', "Nashik");
     db.addRecord(24, "Gunjan", 'S', "Sambhaji Nagar");
     db.addRecord(54, "Yash", 'S', "Jalgaon");
     db.addRecord(50, "Saksham", 'S', "Delhi");
 
-    db.readFromFile();
     db.display();
+    db.search(24);
+    db.deleteRecord(24);
+    cout << "\nAfter Deletion:" << endl;
+    db.display();
+
+    db.search(24);
 
     return 0;
 }
