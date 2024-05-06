@@ -10,7 +10,7 @@ public:
 
     void DFS(string start, vector<string>& order) {
         stack<string> s;
-        unordered_map<string, bool> visited = {};
+        unordered_map<string, bool> visited;
 
         s.push(start);
 
@@ -33,7 +33,7 @@ public:
 
     void BFS(string start, vector<string>& order) {
         queue<string> q;
-        unordered_map<string, bool> visited = {};
+        unordered_map<string, bool> visited;
         string curr;
 
         q.push(start);
