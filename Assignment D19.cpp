@@ -1,269 +1,202 @@
-#include<iostream>
-#include<cstring>
-#include<cstdlib>
-#define MAX 50
-#define SIZE 20
+#include <bits/stdc++.h>
 using namespace std;
 
-struct AVLnode
-{
-    public:
-    char cWord[SIZE],cMeaning[MAX];
-    AVLnode *left,*right;
-    int iB_fac,iHt;
+class AVLNode {
+public:
+    string word;
+    string definition;
+    int balanceFactor;
+    AVLNode *left, *right;
+
+    AVLNode(string w, string d, int b): word(w), definition(d), balanceFactor(b), left(nullptr), right(nullptr) {}
 };
 
-class AVLtree
-{
-    
-    public:
-        AVLnode *root;
-        AVLtree()
-        {
-            root=NULL;
+class AVLTree {
+private:
+    AVLNode* root;
+
+public:
+
+    AVLTree(): root(nullptr) {}
+
+    AVLNode* __insert(AVLNode* node, string w, string d) {
+        if (!node) return(new AVLNode(w, d, 0));
+
+        if (w < node->word)
+            node->left = __insert(node->left, w, d);
+        else if (w > node->word)
+            node->right = __insert(node->right, w, d);
+        else
+            return node;
+
+        node->balanceFactor = 1 + max(__height(node->left), __height(node->right));
+
+        int balance = calculateBalance(node);
+
+        if (balance > 1 && w < node->left->word)
+            return RR(node);
+
+        if (balance < -1 && w > node->right->word)
+            return LL(node);
+
+        if (balance > 1 && w > node->left->word) {
+            node->left = LL(node->left);
+            return RR(node);
         }
-        int height(AVLnode*);
-        int bf(AVLnode*);
-        AVLnode* insert(AVLnode*,char[SIZE],char[MAX]);
-        AVLnode* rotate_left(AVLnode*);
-        AVLnode* rotate_right(AVLnode*);
-        AVLnode* LL(AVLnode*);
-        AVLnode* RR(AVLnode*);
-        AVLnode* LR(AVLnode*);
-        AVLnode* RL(AVLnode*);
-        AVLnode* delet(AVLnode*,char x[SIZE]);
-        void inorder(AVLnode*);
+
+        if (balance < -1 && w < node->right->word) {
+            node->right = RR(node->right);
+            return LL(node);
+        }
+
+        return node;
+    }
+
+    void insert(string w, string d) {
+        this->root = __insert(root, w, d);
+    }
+
+    AVLNode* search(string w) {
+        if (!root) return nullptr;
+
+        AVLNode* curr = root;
+        while (curr) {
+            if (curr->word == w) {
+                return curr;
+            } else if (w < curr->word) {
+                curr = curr->left;
+            } else if (w > curr->word) {
+                curr = curr->right;
+            }
+        }
+
+        return curr;
+    }
+
+    AVLNode* __remove(AVLNode* node, string w) {
+        if (!node) return nullptr;
+
+        AVLNode* temp;
+        if (w > node->word) {
+            node->right = __remove(node->right, w);
+            if (calculateBalance(node) == 2) {
+                if (calculateBalance(node->left) >= 0)
+                    node = RR(node);
+                else {
+                    node->left = LL(node->left);
+                    node = RR(node);
+                }
+            }
+        } else if (w < node->word) {
+            node->left = __remove(node->left, w);
+            if (calculateBalance(node) == -2) {
+                if (calculateBalance(node->right) <= 0)
+                    node = LL(node);
+                else {
+                    node->right = RR(node->right);
+                    node = LL(node);
+                }
+            }
+        } else {
+            if (!node->right)
+                return node->left;
+
+            temp = node->right;
+            while (temp->left)
+                temp = temp->left;
+
+            node->word = temp->word;
+            node->right = __remove(node->right, temp->word);
+            if (calculateBalance(node) == 2) {
+                if (calculateBalance(node->left) >= 0)
+                    node = RR(node);
+                else {
+                    node->left = LL(node->left);
+                    node = RR(node);
+                }
+            }
+        }
+        node->balanceFactor = __height(node);
+        return node;
+    }
+
+    void remove(string w) { __remove(this->root, w); }
+
+    int height() {
+        return __height(this->root);
+    }
+
+    int __height(AVLNode* node) {
+        if (!node) {
+            return 0;
+        }
+
+        int leftHeight = __height(node->left);
+        int rightHeight = __height(node->right);
+
+        return max(leftHeight, rightHeight) + 1;
+    }
+
+    int calculateBalance(AVLNode* node) {
+        if (!node) return 0;
+        return __height(node->left) - __height(node->right);
+    }
+
+    AVLNode* RR(AVLNode* node) {
+        AVLNode* x = node->left;
+        AVLNode* y = x->right;
+
+        x->right = node;
+        node->left = y;
+
+        node->balanceFactor = calculateBalance(node);
+        x->balanceFactor = calculateBalance(x);
+
+        return x;
+    }
+
+    AVLNode* LL(AVLNode* node) {
+        AVLNode* x = node->right;
+        AVLNode* y = x->left;
+
+        x->left = node;
+        node->right = y;
+
+        node->balanceFactor = calculateBalance(node);
+        x->balanceFactor = calculateBalance(x);
+
+        return x;
+    }
+
+
+    // OPTIONAL FUNCTION
+    void __inorder(AVLNode *node){
+        if (!node) return;
+        __inorder(node->left);
+        cout << "( " << node->word << ": " << node->definition << " ) ";
+        __inorder(node->right);
+    }
+
+    inline void inorder() { __inorder(this->root); cout << endl; }
 };
 
-AVLnode *AVLtree::delet(AVLnode *curr,char x[SIZE])
-{
-    AVLnode *temp;
-    if(curr==NULL)
-        return(0);
-    else
-        if(strcmp(x,curr->cWord)>0)
-        {
-            curr->right=delet(curr->right,x);
-            if(bf(curr)==2)
-            if(bf(curr->left)>=0)
-                curr=LL(curr);
-            else
-                curr=LR(curr);
-        }
-        else
-        if(strcmp(x,curr->cWord)<0)
-        {
-            curr->left=delet(curr->left,x);
-            if(bf(curr)==-2)
-            if(bf(curr->right)<=0)
-                curr=RR(curr);
-            else
-                curr=RL(curr);
-        }
-    else
-    {
-        if(curr->right!=NULL)
-        {
-            temp=curr->right;
-            while(temp->left!=NULL)
-            temp=temp->left;
-            strcpy(curr->cWord,temp->cWord);
-            curr->right=delet(curr->right,temp->cWord);
-            if(bf(curr)==2)
-            if(bf(curr->left)>=0)
-                curr=LL(curr);
-            else
-                curr=LR(curr);
-        }
-        else
-        return(curr->left);
+int main() {
+    AVLTree dict;
+
+    dict.insert("yo", "greeting");
+    dict.insert("imo", "in my opinion");
+    dict.insert("rn", "right now");
+    dict.insert("ig", "i guess");
+
+    if (dict.search("wg")) {
+        cout << "Found " << endl;
+    } else {
+        cout << "Not Found" << endl;
     }
-    curr->iHt=height(curr);
-    return(curr);
-}
 
+    dict.inorder();
+    dict.remove("imo");
+    dict.inorder();
 
-AVLnode* AVLtree :: insert(AVLnode*root,char newword[SIZE],char newmeaning[MAX])
-{
-    if(root==NULL)
-    {
-        root=new AVLnode;
-        root->left=root->right=NULL;
-        strcpy(root->cWord,newword);
-        strcpy(root->cMeaning,newmeaning);
-    }
-    
-    else if(strcmp(root->cWord,newword)!=0)
-    {
-        if(strcmp(root->cWord,newword)>0)
-        {
-            root->left=insert(root->left,newword,newmeaning);
-            if(bf(root)==2)
-            {
-                if (strcmp(root->left->cWord,newword)>0)
-                    root=LL(root);
-                else
-                    root=LR(root);
-            }
-        }
-        
-        else if(strcmp(root->cWord,newword)<0)
-        {
-            root->right=insert(root->right,newword,newmeaning);
-            if(bf(root)==-2)
-            {
-                if(strcmp(root->right->cWord,newword)>0)
-                    root=RR(root);
-                else
-                    root=RL(root);
-            }
-        }
-    }
-    else
-        cout<<"\nRedundant AVLnode";
-    root->iHt=height(root);
-    return root;
-}
-
-int AVLtree :: height(AVLnode* curr)
-{
-    int lh,rh;
-    if(curr==NULL)
-        return 0;
-    if(curr->right==NULL && curr->left==NULL)
-        return 0;
-    else
-    {
-        lh=lh+height(curr->left);
-        rh=rh+height(curr->right);
-        if(lh>rh)
-            return lh+1;
-        return rh+1;
-    }
-}       
-
-int AVLtree :: bf(AVLnode* curr)
-{
-    int lh,rh;
-    if(curr==NULL)
-        return 0;
-    else
-    {
-        if(curr->left==NULL)
-            lh=0;
-        else
-            lh=1+curr->left->iHt;
-        if(curr->right==NULL)
-            rh=0;
-        else
-            rh=1+curr->right->iHt;
-        return(lh-rh);
-    }
-}
-            
-AVLnode* AVLtree :: rotate_right(AVLnode* curr)
-{
-    AVLnode* temp;
-    temp=curr->left;
-    curr->left=temp->right;
-    temp->left=curr;
-    curr->iHt=height(curr);
-    temp->iHt=height(temp);
-    return temp;
-}
-
-AVLnode* AVLtree :: rotate_left(AVLnode* curr)
-{
-    AVLnode* temp;
-    temp=curr->right;
-    curr->right=temp->left;
-    temp->left=curr;
-    curr->iHt=height(curr);
-    temp->iHt=height(temp);
-    return temp;
-}
-
-AVLnode* AVLtree :: RR(AVLnode* curr)
-{
-    curr=rotate_left(curr);
-    return curr;
-}
-
-AVLnode* AVLtree :: LL(AVLnode* curr)
-{
-    curr=rotate_right(curr);
-    return curr;
-}
-    
-AVLnode* AVLtree :: RL(AVLnode* curr)
-{
-    curr->right=rotate_right(curr->right);
-    curr=rotate_left(curr);
-    return curr;
-}
-
-AVLnode* AVLtree::LR(AVLnode* curr)
-{
-    curr->left=rotate_left(curr->left);
-    curr=rotate_right(curr);
-    return curr;
-}
-
-void AVLtree :: inorder(AVLnode* curr)
-{
-    if(curr!=NULL)
-    {
-        inorder(curr->left);
-        cout<<"\n\t"<<curr->cWord<<"\t"<<curr->cMeaning;
-        inorder(curr->right);
-    }
-}
-
-int main()
-{
-    int iCh;
-    AVLtree a;
-    AVLnode *curr=NULL;
-    char cWd[SIZE],cMean[MAX];
-    cout<<"\n--------------------------------------";
-    cout<<"\n\tAVL TREE IMPLEMENTATION";
-    cout<<"\n--------------------------------------";   
-    do
-    {   cout<<"\n--------------------------------";
-        cout<<"\n\t\tMENU";
-        cout<<"\n--------------------------------";
-        cout<<"\n1.Insert\n2.Inorder\n3.Delete\n4.Exit";
-        cout<<"\n--------------------------------";
-        cout<<"\nEnter your choice :";
-        cin>>iCh;
-        
-        switch(iCh)
-        {
-            case 1: cout<<"\nEnter Word : ";
-                cin>>cWd;
-                cout<<"\nEnter Meaning : ";
-                cin.ignore();
-                cin.getline(cMean,MAX);
-                a.root=a.insert(a.root,cWd,cMean);
-                break;
-            
-            case 2: cout<<"\n\tWORD\tMEANING";
-                a.inorder(a.root);
-                break;
-                
-            case 3: cout<<"\nEnter the word to be deleted : ";
-                    cin>>cWd;
-                    curr=a.delet(a.root,cWd);
-                    if(curr==NULL)
-                        cout<<"\nWord not present!";
-                    else
-                        cout<<"\nWord deleted Successfully!";
-                    curr=NULL;
-                    break;
-            
-            case 4: exit(0);
-        }
-    }while(iCh!=4);
-     
     return 0;
 }
