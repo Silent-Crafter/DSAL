@@ -14,7 +14,7 @@ private:
 
 public:
     StudentDB(): filename("student.dat") {}
-    ~StudentDB() { remove("student.dat"); }
+    ~StudentDB() {}
 
     void addRecord(int r, const char* n, char d, const char* a) {
         fstream db(filename, ios::app | ios::binary);
@@ -78,10 +78,10 @@ public:
 int main() {
     StudentDB db;
 
-    db.addRecord(15, "Nikhil", 'S', "Nashik");
-    db.addRecord(24, "Gunjan", 'S', "Sambhaji Nagar");
-    db.addRecord(54, "Yash", 'S', "Jalgaon");
-    db.addRecord(50, "Saksham", 'S', "Delhi");
+    db.addRecord(15, "Rahul", 'S', "Nashik");
+    db.addRecord(24, "Rohan", 'S', "Pune");
+    db.addRecord(54, "Rakesh", 'S', "Mumbai");
+    db.addRecord(50, "Ram", 'S', "Delhi");
 
     db.display();
     db.search(24);

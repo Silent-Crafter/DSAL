@@ -2,12 +2,11 @@
 using namespace std;
 
 class Node {
-private:
+public:
     char op;
     Node* left;
     Node* right;
 
-public:
     Node(char o): op(o), left(nullptr), right(nullptr) {}
 
     ~Node() {
@@ -17,16 +16,14 @@ public:
         this->right = nullptr;
         this->op = '\0';
     }
-
-    friend class AbstractSyntaxTree;
 };
 
-class AbstractSyntaxTree {
+class ExpressionTree {
 private:
     Node* root;
 
 public:
-    AbstractSyntaxTree(): root(nullptr) {}
+    ExpressionTree(): root(nullptr) {}
 
     void fromPrefixNotation(const string& expression) {
         stack<Node*> operations;
@@ -56,9 +53,7 @@ public:
                 } else {
                     if (!operations.empty())
                         curr = operations.top();
-                    else {
-                        break;
-                    }
+
                 }
             }
         }
@@ -102,10 +97,10 @@ public:
 
 
 int main() {
-    AbstractSyntaxTree ast;
-    ast.fromPrefixNotation("+--a*bc/def");
+    ExpressionTree et;
+    et.fromPrefixNotation("+--a*bc/def");
     cout << "POST ORDER: ";
-    ast.postOrder();
-    ast.clear();
+    et.postOrder();
+    et.clear();
     return 0;
 }

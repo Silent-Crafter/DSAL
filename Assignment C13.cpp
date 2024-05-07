@@ -3,10 +3,17 @@ using namespace std;
 
 class Graph {
 private:
-    unordered_map<string, vector<string>> adjList;
+    map<string, map<string, int>> adjMatrix;
 
 public:
-    Graph() {};
+    Graph(vector<string> vertices) {
+        // Initialize matrix
+        for (auto parent : vertices) {
+            for (auto child: vertices) {
+                adjMatrix[parent][child] = 0;
+            }
+        }
+    }
 
     void DFS(string start, vector<string>& order) {
         stack<string> s;
@@ -23,9 +30,9 @@ public:
                 order.push_back(curr);
             }
 
-            for (const auto& neighbour : adjList[curr]) {
-                if (!visited[neighbour]) {
-                    s.push(neighbour);
+            for (const auto& neighbour : adjMatrix[curr]) {
+                if (!visited[neighbour.first]  && neighbour.second == 1) {
+                    s.push(neighbour.first);
                 }
             }
         }
@@ -47,23 +54,24 @@ public:
                 order.push_back(curr);
             }
 
-            for (auto neighbour : adjList[curr]) {
-                if (!visited[neighbour])
-                    q.push(neighbour);
+            for (auto neighbour : adjMatrix[curr]) {
+                if (!visited[neighbour.first] && neighbour.second == 1)
+                    q.push(neighbour.first);
             }
         }
     }
 
     void addEdge(string parent, string child) {
-        adjList[parent].push_back(child);
-        adjList[child].push_back(parent);
+        adjMatrix[parent][child] = 1;
+        adjMatrix[child][parent] = 1;
     }
 };
 
 int main() {
 
     // Create Graph
-    Graph g;
+    Graph g({"Bus stop", "Auditorium", "College", "Canteen"});
+
     g.addEdge("Bus stop", "Auditorium");
     g.addEdge("Bus stop", "College");
     g.addEdge("Auditorium", "College");

@@ -14,15 +14,14 @@ public:
 };
 
 class BST {
-private:
-    BSTNode* root;
-
 public:
-    BST(): root(nullptr) {}
+    BSTNode *root;
+
+    BST() : root(nullptr) {}
 
     void insert(int data) {
-        BSTNode* temp = root;
-        BSTNode* prev = root;
+        BSTNode *temp = root;
+        BSTNode *prev = root;
         if (!root) {
             root = new BSTNode(data);
             root->data = data;
@@ -50,7 +49,7 @@ public:
             return 0;
         }
 
-        BSTNode* temp = this->root;
+        BSTNode *temp = this->root;
         while (temp->left != nullptr)
             temp = temp->left;
 
@@ -62,10 +61,10 @@ public:
             return;
         }
 
-        queue<BSTNode*> level;
+        queue<BSTNode *> level;
 
-        BSTNode* curr;
-        BSTNode* temp;
+        BSTNode *curr;
+        BSTNode *temp;
         level.push(root);
 
         while (!level.empty()) {
@@ -90,17 +89,13 @@ public:
             return false;
         }
 
-        BSTNode* temp = root;
+        BSTNode *temp = root;
         while (temp) {
             if (value == temp->data) {
                 return true;
-            }
-
-            else if (value < temp->data) {
+            } else if (value < temp->data) {
                 temp = temp->left;
-            }
-
-            else if (value > temp->data) {
+            } else if (value > temp->data) {
                 temp = temp->right;
             }
         }
@@ -113,14 +108,14 @@ public:
             return 0;
         }
 
-        queue<BSTNode*> level;
+        queue<BSTNode *> level;
         int height = 0;
         unsigned int nodes;
 
-        BSTNode* temp;
+        BSTNode *temp;
         level.push(this->root);
 
-        while(!level.empty()) {
+        while (!level.empty()) {
             height++;
             nodes = level.size();
             while (nodes--) {
@@ -138,43 +133,12 @@ public:
         return height;
     }
 
-    // OPTIONAL FUNCTION
-    void display() {
-        if (!root) {
-            cout << "[]" << endl;
-            return;
-        }
-        cout << "ARRAY REPRESENTATION: [ " << flush;
+    void inorder(BSTNode* root){
+        if (!root) return;
 
-        queue<BSTNode*> level;
-        vector<string> representation;
-        level.push(root);
-        representation.push_back(to_string(root->data));
-
-        BSTNode* temp;
-        while(!level.empty()) {
-            temp = level.front();
-            level.pop();
-
-            if (temp->left) {
-                representation.push_back(to_string(temp->left->data));
-                level.push(temp->left);
-            } else {
-                representation.emplace_back("NULL");
-            }
-
-            if (temp->right) {
-                representation.push_back(to_string(temp->right->data));
-                level.push(temp->right);
-            } else {
-                representation.emplace_back("NULL");
-            }
-        }
-
-        for (auto& item : representation) {
-            cout << item << ", ";
-        }
-        cout << "]" << endl;
+        inorder(root->left);
+        cout << root->data << " ";
+        inorder(root->right);
     }
 };
 
@@ -214,9 +178,13 @@ int main() {
         cout << "17 is not present in the binary tree" << endl;
     }
 
-    bst.display();          // OPTIONAL
+    cout << "INORDER: ";
+    bst.inorder(bst.root);
+    cout << endl;
     bst.swapLeftRight();
-    bst.display();          // OPTIONAL
+    cout << "INORDER: ";
+    bst.inorder(bst.root);
+    cout << endl;
 
     return 0;
 }
