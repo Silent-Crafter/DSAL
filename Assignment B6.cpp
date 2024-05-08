@@ -133,12 +133,16 @@ public:
         return height;
     }
 
-    void inorder(BSTNode* root){
-        if (!root) return;
+    void __inorder(BSTNode* node){
+        if (!node) return;
 
-        inorder(root->left);
-        cout << root->data << " ";
-        inorder(root->right);
+        __inorder(node->left);
+        cout << node->data << " ";
+        __inorder(node->right);
+    }
+
+    void inorder() {
+        __inorder(this->root);
     }
 };
 
